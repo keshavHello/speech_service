@@ -50,6 +50,7 @@ async fn main() -> std::io::Result<()> {
         let cors = Cors::default()
             .allowed_origin("http://localhost:5173") // Vite
             .allowed_origin("http://localhost:3000") // Docker / Prod
+            .allowed_origin("https://speech-service-front-2.onrender.com") // Render Prod
             .allowed_methods(vec!["GET", "POST", "OPTIONS"])
             .allowed_headers(vec![
                 header::CONTENT_TYPE,
