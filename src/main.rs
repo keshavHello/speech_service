@@ -15,16 +15,26 @@ async fn upload(mut payload: Multipart) -> HttpResponse {
     let mp3_path = "output.mp3";
 
     // Save uploaded file
+    let mut has_data = false;
+    let mut f = File::create(txt_path).unwrap();
+
     while let Some(item) = payload.next().await {
         let mut field = item.unwrap();
-        let mut f = File::create(txt_path).unwrap();
+
 
         while let Some(chunk) = field.next().await {
             let data = chunk.unwrap();
+            if data.is_empty() {
+                continue;
+            }
+            has_data = true;
             f.write_all(&data).unwrap();
+            
         }
     }
-
+    if !has_data {
+        return HttpResponse::BadRequest().body("No file or text uploaded");
+    }
     // Call Python TTS
     let status = Command::new("python")
         .arg("speech.py")
